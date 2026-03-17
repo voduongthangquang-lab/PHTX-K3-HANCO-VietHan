@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Chữ Hán - Luyện Phản Xạ</title>
+    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+    <style>
+        :root {
+            --bg-color: #e8f5e9;
+            --container-bg: #ffffff;
+            --primary-color: #4caf50;
+            --primary-dark: #388e3c;
+            --text-color: #333;
+            --border-color: #c8e6c9;
+            --han-color: #1b5e20; /* Màu xanh đậm cho nét chữ Hán */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            background-color: var(--container-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            border-top: 6px solid var(--primary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .am-han-viet {
+            font-size: 1.3em;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f1f8f1;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Khu vực xếp chữ (Câu trả lời) */
+        .answer-area {
+            min-height: 70px;
+            border: 2px dashed #a5d6a7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            background-color: #fafafa;
+        }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 100px;
+            margin-bottom: 20px;
+        }
+
+        /* Khối chữ Hán */
+        .char-block {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 2em;
+            color: var(--han-color);
+            background-color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 5px 15px;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .char-block:active {
+            transform: scale(0.95);
+        }
+
+        .char-block.hidden {
+            visibility: hidden;
+        }
+
+        .result-area {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            animation: fadeIn 0.5s;
+        }
+
+        .result-area.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .full-sentence {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 2.2em;
+            color: var(--han-color);
+            margin-bottom: 10px;
+        }
+
+        .translation {
+            font-size: 1.1em;
+            color: #333;
+            font-style: italic;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover { background-color: var(--primary-dark); }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lắc khi sai */
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <span id="progress-text">Câu 1 / 16</span>
+        <button class="btn" style="padding: 5px 10px; margin-top: 0; font-size: 0.9em; background-color: transparent; color: var(--primary-color); border: 1px solid var(--primary-color);" onclick="skipQuestion()">Bỏ qua</button>
+    </div>
+
+    <div class="am-han-viet" id="am-han-viet">
+        </div>
+
+    <div class="answer-area" id="answer-area">
+        </div>
+
+    <div class="word-bank" id="word-bank">
+        </div>
+
+    <div class="result-area" id="result-area">
+        <div class="full-sentence" id="full-sentence"></div>
+        <div class="translation" id="translation"></div>
+        <button class="btn" id="next-btn" onclick="nextQuestion()">Câu Tiếp Theo ➔</button>
+    </div>
+</div>
+
+<script>
+    const lessonData = [
+        { h: "Bì phu hữu khổng, sở dĩ bài tiết hãn dịch dã.", c: "皮膚有孔，所以排泄汗液也。", n: "Da có lỗ, nên bài tiết được mồ hôi." },
+        { h: "Nhân chi thân thể, dĩ vận động nhi nhật kiện.", c: "人之身體，以運動而日健。", n: "Thân thể con người nhờ vận động mà ngày càng mạnh khỏe." },
+        { h: "Vận động chi hữu ích giả, mạc như thể thao.", c: "運動之有益者，莫如體操。", n: "Vận động có ích, không bằng gì thể thao." },
+        { h: "Tăng giả, Tăng già chi tỉnh xưng, ý vi hòa hợp chúng.", c: "僧者，僧伽之省稱。意為和合眾。", n: "“Tăng” là tiếng gọi tắt của “Tăng già”, nghĩa là hòa hợp chúng." },
+        { h: "Nhất, Giới hòa đồng tu; nhị, Kiến hòa đồng giải;", c: "一、戒和同修。二、見和同解。", n: "1. Giới hòa hợp cùng tu; 2. Thấy biết hòa hợp để cùng hiểu." },
+        { h: "Tam, Thân hòa đồng trụ; tứ, Lợi hòa đồng quân.", c: "三、身和同住。四、利和同均。", n: "3. Thân hòa hợp sống chung với nhau; 4. Lợi ích hòa hợp phân chia đồng đều." },
+        { h: "Ngũ, Khẩu hòa vô tranh; Lục, Ý hòa đồng duyệt.", c: "五、口和無諍。六、意和同悅。", n: "5. Miệng hòa hợp không tranh cãi nhau; 6. Ý hòa hợp cùng vui." },
+        { h: "Cố thử Tăng tự, thực Phật đệ tử đoàn thể chi danh dã.", c: "故此僧字，實佛弟子團體之名也。", n: "Cho nên chữ Tăng này thật là tên gọi của đoàn thể đệ tử Phật." },
+        { h: "Thích Ca thị Phật chi tính, Mâu Ni thị Phật chi danh.", c: "釋迦是佛之姓,牟尼是佛之名。", n: "Thích Ca là họ của Phật, Mâu Ni là tên của Phật." },
+        { h: "Ngã quốc dịch vi năng nhân tịch mặc.", c: "我國譯為“能仁寂默”", n: "Nước ta (Trung Quốc) dịch là “Năng nhân tịch mặc”." },
+        { h: "Năng tức năng lực, nhân tức từ bi.", c: "能即能力，仁即慈悲。", n: "Năng nghĩa là năng lực, nhân nghĩa là từ bi." },
+        { h: "Tịch giả, bất vi khổ lạc sở động.", c: "寂者，不為苦樂所動。", n: "Tịch là không bị những điều khổ vui làm dao động." },
+        { h: "Mặc giả, bất vi phiền não sở nhiễu.", c: "默者，不為煩惱所擾。", n: "Mặc là không bị phiền não làm rối loạn." },
+        { h: "Công đức viên mãn, cố hiệu Thích Ca Mâu Ni.", c: "功德圓滿,故號釋迦牟尼。", n: "Công đức tròn đủ, cho nên hiệu là Thích Ca Mâu Ni." },
+        { h: "Kim ngã bối ký thị Phật chi đệ tử,", c: "今我輩既是佛之弟子。", n: "Ngày nay, chúng ta đã là đệ tử của Ngài." },
+        { h: "Phật chi đệ tử ưng học Phật chi Năng nhân tịch mặc.", c: "佛之弟子，應學佛之能仁寂默。", n: "Đệ tử của Ngài phải học theo cái đức tánh “Năng nhơn Tịch mặc” của Ngài." }
+    ];
+
+    let currentIndex = 0;
+    let targetChars = []; // Mảng chứa các chữ Hán đúng (đã lọc bỏ dấu câu)
+    let shuffledBank = []; // Mảng chứa các chữ bị xáo trộn để hiển thị
+    let selectedIndices = []; // Lưu vị trí các chữ đã chọn từ word bank
+
+    const amHanVietEl = document.getElementById('am-han-viet');
+    const answerArea = document.getElementById('answer-area');
+    const wordBank = document.getElementById('word-bank');
+    const resultArea = document.getElementById('result-area');
+    const fullSentenceEl = document.getElementById('full-sentence');
+    const translationEl = document.getElementById('translation');
+    const progressText = document.getElementById('progress-text');
+
+    function shuffleArray(array) {
+        let newArr = [...array];
+        for (let i = newArr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+        }
+        return newArr;
+    }
+
+    function loadQuestion() {
+        const data = lessonData[currentIndex];
+        progressText.innerText = `Câu ${currentIndex + 1} / ${lessonData.length}`;
+        amHanVietEl.innerText = data.h;
+        
+        targetChars = data.c.replace(/[^\u4E00-\u9FFF一二三四五六七八九十]/g, '').split('');
+        
+        let objectsToShuffle = targetChars.map((char, index) => ({ char: char, originalId: index }));
+        shuffledBank = shuffleArray(objectsToShuffle);
+        
+        selectedIndices = [];
+        resultArea.style.display = 'none';
+        resultArea.classList.remove('error');
+        renderAreas();
+    }
+
+    function renderAreas() {
+        wordBank.innerHTML = '';
+        shuffledBank.forEach((item, index) => {
+            const charDiv = document.createElement('div');
+            charDiv.className = 'char-block';
+            charDiv.innerText = item.char;
+            
+            if (selectedIndices.includes(index)) {
+                charDiv.classList.add('hidden');
+            } else {
+                charDiv.onclick = () => selectChar(index);
+            }
+            wordBank.appendChild(charDiv);
+        });
+
+        answerArea.innerHTML = '';
+        selectedIndices.forEach((bankIndex) => {
+            const charDiv = document.createElement('div');
+            charDiv.className = 'char-block';
+            charDiv.innerText = shuffledBank[bankIndex].char;
+            // Click vào chữ ở đáp án để hoàn tác
+            charDiv.onclick = () => deselectChar(bankIndex);
+            answerArea.appendChild(charDiv);
+        });
+
+        if (selectedIndices.length === targetChars.length && targetChars.length > 0) {
+            checkAnswer();
+        }
+    }
+
+    function selectChar(bankIndex) {
+        selectedIndices.push(bankIndex);
+        renderAreas();
+    }
+
+    function deselectChar(bankIndex) {
+        selectedIndices = selectedIndices.filter(idx => idx !== bankIndex);
+        resultArea.style.display = 'none';
+        answerArea.classList.remove('shake');
+        renderAreas();
+    }
+
+    function checkAnswer() {
+        const userStr = selectedIndices.map(idx => shuffledBank[idx].char).join('');
+        const correctStr = targetChars.join('');
+
+        const data = lessonData[currentIndex];
+
+        if (userStr === correctStr) {
+            // Đúng: Hiện bản dịch đầy đủ có dấu câu
+            resultArea.classList.remove('error');
+            fullSentenceEl.innerText = data.c; // Hiện câu gốc có cả dấu phẩy, chấm
+            translationEl.innerText = data.n;
+            resultArea.style.display = 'block';
+            
+            Array.from(answerArea.children).forEach(child => child.onclick = null);
+        } else {
+            // Sai: Lắc nhẹ và báo lỗi
+            answerArea.classList.remove('shake');
+            void answerArea.offsetWidth; // trigger reflow
+            answerArea.classList.add('shake');
+            
+            resultArea.classList.add('error');
+            fullSentenceEl.innerText = "Chưa đúng thứ tự rồi!";
+            translationEl.innerText = "Hãy nhấn vào chữ bên trên để gỡ ra và xếp lại nhé.";
+            resultArea.style.display = 'block';
+        }
+    }
+
+    function skipQuestion() {
+        const data = lessonData[currentIndex];
+        resultArea.classList.remove('error');
+        fullSentenceEl.innerText = data.c;
+        translationEl.innerText = data.n;
+        resultArea.style.display = 'block';
+        answerArea.innerHTML = '';
+        wordBank.innerHTML = '';
+        
+        targetChars.forEach(char => {
+            const charDiv = document.createElement('div');
+            charDiv.className = 'char-block';
+            charDiv.innerText = char;
+            charDiv.style.cursor = 'default';
+            answerArea.appendChild(charDiv);
+        });
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex >= lessonData.length) {
+            alert("Chúc mừng! Bạn đã ôn tập xong phần viết chữ Hán!");
+            currentIndex = 0; // Quay lại từ đầu
+        }
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>

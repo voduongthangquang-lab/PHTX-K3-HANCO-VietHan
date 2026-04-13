@@ -12,7 +12,11 @@
             --primary-dark: #4caf50;    
             --text-color: #333333;      
             --border-color: #c8e6c9;    
-            --han-color: #2e7d32;       
+            --han-color: #2e7d32;
+            --success-color: #e8f5e9;
+            --success-border: #81c784;
+            --error-color: #ffebee;
+            --error-border: #e57373;
         }
 
         body {
@@ -55,13 +59,11 @@
             text-decoration: none;
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s;
-            white-space: nowrap;
+            transition: 0.3s;
         }
 
         .btn-next-part:hover {
             background-color: var(--primary-dark);
-            color: #ffffff;
             transform: translateY(-2px);
         }
 
@@ -69,49 +71,38 @@
             background-color: var(--container-bg);
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-left: 6px solid var(--primary-color);
-            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 6px solid var(--primary-color);
+            margin-bottom: 40px;
         }
 
-        .am-han-viet {
-            font-family: 'Times New Roman', serif;
-            font-size: 1.8em;
+        .q-title {
             color: var(--primary-dark);
-            margin-bottom: 10px;
-            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 10px;
         }
 
-        /* --- Style cho ô nhập dịch nghĩa --- */
-        .translation-input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
+        /* --- Style cho từng phần Task (Hán, Phiên âm, Dịch) --- */
+        .task-section {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            font-family: inherit;
-            font-size: 1.1em;
-            box-sizing: border-box;
-            resize: vertical;
-            background-color: #fafafa;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
         }
 
-        .translation-input:focus {
-            outline: none;
-            border-color: var(--primary-dark);
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-            background-color: #fff;
-        }
-
-        .translation-input:disabled {
-            background-color: #e0e0e0;
+        .task-label {
+            font-weight: bold;
             color: #555;
-            cursor: not-allowed;
-            border-color: #ccc;
+            margin-bottom: 12px;
+            font-size: 1.1em;
         }
-        /* ---------------------------------- */
 
+        /* KHU VỰC CHỮ HÁN */
         .answer-area {
             min-height: 60px;
             border: 2px dashed #a5d6a7; 
@@ -122,7 +113,7 @@
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
-            background-color: #fafafa;
+            background-color: #fff;
         }
 
         .word-bank {
@@ -130,7 +121,6 @@
             flex-wrap: wrap;
             gap: 8px;
             min-height: 50px;
-            margin-bottom: 15px;
         }
 
         .char-block {
@@ -147,88 +137,85 @@
             transition: transform 0.1s;
         }
 
-        .char-block:active {
-            transform: scale(0.95);
+        .char-block:active { transform: scale(0.95); }
+        .char-block.hidden { display: none; }
+        .char-block.locked { cursor: default; pointer-events: none; border-color: transparent; box-shadow: none; background: transparent;}
+
+        /* KHU VỰC NHẬP TEXT (Phiên âm & Nghĩa) */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
         }
 
-        .char-block.hidden {
-            visibility: hidden;
-            width: 0;
-            padding: 0;
-            margin: 0;
-            border: none;
-        }
-
-        .result-area {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #e8f5e9; 
-            border-radius: 8px;
-            animation: fadeIn 0.4s;
-        }
-
-        .result-area.error {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-        }
-
-        .full-sentence {
-            font-family: "KaiTi", "STKaiti", "Noto Serif SC", "SimSun", serif;
-            font-size: 2em;
-            color: var(--han-color);
-            margin-bottom: 8px;
-        }
-
-        .translation {
+        .text-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
             font-size: 1.1em;
-            color: #333;
-            font-style: italic;
+            resize: vertical;
+            transition: 0.3s;
         }
 
-        .translation strong {
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .text-input:disabled {
+            background-color: var(--success-color);
+            color: #2e7d32;
             font-weight: bold;
-            color: var(--primary-dark);
-            font-style: normal;
+            border-color: var(--success-border);
+            cursor: default;
         }
 
-        .btn-show-answer {
-            margin-top: 10px;
-            padding: 6px 12px;
-            font-size: 15px;
-            font-family: 'Times New Roman', serif;
-            background-color: transparent;
-            color: #c62828;
-            border: 1px solid #c62828;
-            border-radius: 4px;
+        .btn-check {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
+            transition: 0.2s;
+            white-space: nowrap;
         }
 
-        .btn-show-answer:hover {
-            background-color: #c62828;
-            color: #ffffff;
+        .btn-check:hover { background-color: var(--primary-dark); }
+
+        /* THÔNG BÁO KẾT QUẢ */
+        .msg-area {
+            margin-top: 10px;
+            font-size: 1em;
+            display: none;
         }
 
-        .revealed-answer {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed #ffcdd2;
+        .success-text { color: #2e7d32; font-weight: bold; }
+        .error-text { color: #c62828; font-weight: bold; }
+        
+        .show-ans-link {
+            color: #1976d2;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+        .show-ans-link:hover { color: #0d47a1; }
+
+        .han-result {
             font-family: "KaiTi", "STKaiti", "Noto Serif SC", "SimSun", serif;
             font-size: 1.6em;
             color: #c62828;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            margin-top: 10px;
         }
 
-        .shake {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
+        /* HIỆU ỨNG RUNG KHI SAI */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake {
             10%, 90% { transform: translate3d(-1px, 0, 0); }
             20%, 80% { transform: translate3d(2px, 0, 0); }
@@ -241,8 +228,8 @@
 
 <div class="page-container">
     <div class="header-container">
-        <h1 class="page-title">Luyện dịch Việt - Hán</h1>
-        <a href="https://voduongthangquang-lab.github.io/PHTX_K3_HANCO_HANVIET/" class="btn-next-part" target="_blank">
+        <h1 class="page-title">Luyện dịch toàn diện</h1>
+        <a href="https://voduongthangquang-lab.github.io/PHTX-GK3-HANCO-HanVietP3/" class="btn-next-part" target="_blank">
             Phần 3 (Luyện dịch Hán - Việt) ➔
         </a>
     </div>
@@ -287,6 +274,15 @@
 
     let appStates = [];
 
+    // Hàm làm sạch chuỗi: Chữ thường, xóa hết dấu câu, dấu ngoặc, dấu cách thừa
+    function normalizeString(str) {
+        if (!str) return "";
+        return str.toLowerCase()
+            .replace(/[.,;!?:"“”'‘’()\[\]\-\–123456]/g, '') 
+            .replace(/\s+/g, ' ') 
+            .trim();
+    }
+
     function shuffleArray(array) {
         let newArr = [...array];
         for (let i = newArr.length - 1; i > 0; i--) {
@@ -301,30 +297,44 @@
         let htmlContent = '';
 
         lessonData.forEach((data, index) => {
-            let targetChars = data.c.replace(/[^\u4E00-\u9FFF一二三四五六七八九十、，。；“”]/g, '').replace(/[、，。；“”]/g, '').split('');
+            // Lọc ra danh sách chữ Hán chuẩn để check
+            let targetChars = data.c.replace(/[^\u4E00-\u9FFF一二三四五六七八九十]/g, '').split('');
             let objectsToShuffle = targetChars.map((char, originalId) => ({ char, originalId }));
             
             appStates.push({
                 targetChars: targetChars,
                 shuffledBank: shuffleArray(objectsToShuffle),
                 selectedIndices: [],
-                isCompleted: false
+                isHanCompleted: false
             });
 
             htmlContent += `
                 <div class="question-card" id="card-${index}">
-                    <div class="am-han-viet">Câu ${index + 1}: ${data.h}</div>
+                    <h2 class="q-title">Câu ${index + 1}</h2>
                     
-                    <textarea class="translation-input" id="trans-input-${index}" rows="2" placeholder="Nhập dịch nghĩa tiếng Việt của bạn vào đây trước khi xếp chữ..."></textarea>
-                    
-                    <div class="answer-area" id="answer-area-${index}"></div>
-                    <div class="word-bank" id="word-bank-${index}"></div>
-                    <div class="result-area" id="result-area-${index}">
-                        <div class="full-sentence" id="full-sentence-${index}"></div>
-                        <div class="translation" id="translation-${index}"></div>
-                        
-                        <button class="btn-show-answer" id="btn-show-answer-${index}" style="display: none;" onclick="showAnswer(${index})">Xem đáp án chữ Hán</button>
-                        <div class="revealed-answer" id="revealed-answer-${index}" style="display: none;"></div>
+                    <div class="task-section">
+                        <div class="task-label">Bước 1: Sắp xếp chữ Hán</div>
+                        <div class="answer-area" id="answer-area-${index}"></div>
+                        <div class="word-bank" id="word-bank-${index}"></div>
+                        <div class="msg-area" id="han-msg-${index}"></div>
+                    </div>
+
+                    <div class="task-section">
+                        <div class="task-label">Bước 2: Nhập Phiên âm Hán Việt</div>
+                        <div class="input-group">
+                            <input type="text" class="text-input" id="pa-input-${index}" placeholder="Nhập phiên âm của câu trên...">
+                            <button class="btn-check" id="pa-btn-${index}" onclick="checkPA(${index})">Kiểm tra</button>
+                        </div>
+                        <div class="msg-area" id="pa-msg-${index}"></div>
+                    </div>
+
+                    <div class="task-section">
+                        <div class="task-label">Bước 3: Nhập Dịch nghĩa Tiếng Việt</div>
+                        <div class="input-group">
+                            <textarea class="text-input" id="dn-input-${index}" rows="2" placeholder="Nhập dịch nghĩa của câu trên..."></textarea>
+                            <button class="btn-check" id="dn-btn-${index}" onclick="checkDN(${index})">Kiểm tra</button>
+                        </div>
+                        <div class="msg-area" id="dn-msg-${index}"></div>
                     </div>
                 </div>
             `;
@@ -332,15 +342,15 @@
 
         listContainer.innerHTML = htmlContent;
 
+        // Render các khối chữ Hán
         appStates.forEach((_, index) => {
-            renderQuestion(index);
+            renderHanBlocks(index);
         });
     }
 
-    function renderQuestion(qIndex) {
+    /* ====== XỬ LÝ KHỐI 1: CHỮ HÁN ====== */
+    function renderHanBlocks(qIndex) {
         const state = appStates[qIndex];
-        if (state.isCompleted) return; 
-        
         const answerArea = document.getElementById(`answer-area-${qIndex}`);
         const wordBank = document.getElementById(`word-bank-${qIndex}`);
 
@@ -353,7 +363,7 @@
             if (state.selectedIndices.includes(bIndex)) {
                 charDiv.classList.add('hidden'); 
             } else {
-                charDiv.onclick = () => selectChar(qIndex, bIndex);
+                charDiv.onclick = () => { if(!state.isHanCompleted) selectChar(qIndex, bIndex); };
             }
             wordBank.appendChild(charDiv);
         });
@@ -363,85 +373,139 @@
             const charDiv = document.createElement('div');
             charDiv.className = 'char-block';
             charDiv.innerText = state.shuffledBank[bIndex].char;
-            charDiv.onclick = () => deselectChar(qIndex, bIndex); 
+            
+            if (state.isHanCompleted) {
+                charDiv.classList.add('locked');
+            } else {
+                charDiv.onclick = () => deselectChar(qIndex, bIndex); 
+            }
             answerArea.appendChild(charDiv);
         });
 
-        if (state.selectedIndices.length === state.targetChars.length && state.targetChars.length > 0) {
-            checkAnswer(qIndex);
+        // Tự check khi điền đủ chữ
+        if (!state.isHanCompleted && state.selectedIndices.length === state.targetChars.length && state.targetChars.length > 0) {
+            checkHan(qIndex);
         }
     }
 
     function selectChar(qIndex, bIndex) {
         appStates[qIndex].selectedIndices.push(bIndex);
-        renderQuestion(qIndex);
+        renderHanBlocks(qIndex);
     }
 
     function deselectChar(qIndex, bIndex) {
-        const state = appStates[qIndex];
-        state.selectedIndices = state.selectedIndices.filter(idx => idx !== bIndex);
-        
-        const resultArea = document.getElementById(`result-area-${qIndex}`);
-        resultArea.style.display = 'none';
+        appStates[qIndex].selectedIndices = appStates[qIndex].selectedIndices.filter(idx => idx !== bIndex);
+        document.getElementById(`han-msg-${qIndex}`).style.display = 'none';
         document.getElementById(`answer-area-${qIndex}`).classList.remove('shake');
-        
-        renderQuestion(qIndex);
+        renderHanBlocks(qIndex);
     }
 
-    function checkAnswer(qIndex) {
+    function checkHan(qIndex) {
         const state = appStates[qIndex];
         const data = lessonData[qIndex];
-        
         const userStr = state.selectedIndices.map(idx => state.shuffledBank[idx].char).join('');
         const correctStr = state.targetChars.join('');
-
-        const resultArea = document.getElementById(`result-area-${qIndex}`);
-        const fullSentenceEl = document.getElementById(`full-sentence-${qIndex}`);
-        const translationEl = document.getElementById(`translation-${qIndex}`);
-        const answerArea = document.getElementById(`answer-area-${qIndex}`);
-        const transInput = document.getElementById(`trans-input-${qIndex}`);
         
-        const btnShowAnswer = document.getElementById(`btn-show-answer-${qIndex}`);
-        const revealedAnswer = document.getElementById(`revealed-answer-${qIndex}`);
+        const msgArea = document.getElementById(`han-msg-${qIndex}`);
+        const answerArea = document.getElementById(`answer-area-${qIndex}`);
 
         if (userStr === correctStr) {
-            state.isCompleted = true; 
-            resultArea.classList.remove('error');
-            fullSentenceEl.innerText = data.c; 
-            
-            // Hiện đáp án nghĩa chuẩn để người dùng đối chiếu
-            translationEl.innerHTML = "<strong>Nghĩa chuẩn:</strong> " + data.n;
-            
-            // Khóa ô nhập liệu lại khi đã làm đúng
-            if (transInput) {
-                transInput.disabled = true;
-            }
-            
-            btnShowAnswer.style.display = 'none';
-            revealedAnswer.style.display = 'none';
-            resultArea.style.display = 'block';
-            
-            Array.from(answerArea.children).forEach(child => child.onclick = null);
+            state.isHanCompleted = true; 
+            msgArea.style.display = 'block';
+            msgArea.innerHTML = `<span class="success-text">✔ Sắp xếp chính xác!</span>`;
+            renderHanBlocks(qIndex); // re-render để khóa các block
         } else {
             answerArea.classList.remove('shake');
             void answerArea.offsetWidth; 
             answerArea.classList.add('shake');
-            
-            resultArea.classList.add('error');
-            fullSentenceEl.innerText = "Chưa đúng thứ tự rồi!";
-            translationEl.innerText = "Hãy nhấn vào chữ bên trên để gỡ ra và xếp lại nhé.";
-            
-            btnShowAnswer.style.display = 'inline-block';
-            revealedAnswer.style.display = 'none';
-            revealedAnswer.innerText = "Đáp án chữ Hán: " + correctStr; 
-            
-            resultArea.style.display = 'block';
+            msgArea.style.display = 'block';
+            msgArea.innerHTML = `
+                <span class="error-text">✘ Sai thứ tự. Hãy gỡ chữ ra xếp lại.</span> 
+                <span class="show-ans-link" onclick="showHanAns(${qIndex})">Xem đáp án</span>
+            `;
         }
     }
 
-    function showAnswer(qIndex) {
-        document.getElementById(`btn-show-answer-${qIndex}`).style.display = 'none';
-        document.getElementById(`revealed-answer-${qIndex}`).style.display = 'block';
+    function showHanAns(qIndex) {
+        const data = lessonData[qIndex];
+        const msgArea = document.getElementById(`han-msg-${qIndex}`);
+        msgArea.innerHTML = `<div class="han-result">Đáp án chuẩn: ${data.c}</div>`;
+    }
+
+    /* ====== XỬ LÝ KHỐI 2: PHIÊN ÂM ====== */
+    function checkPA(qIndex) {
+        const inputEl = document.getElementById(`pa-input-${qIndex}`);
+        const btnEl = document.getElementById(`pa-btn-${qIndex}`);
+        const msgArea = document.getElementById(`pa-msg-${qIndex}`);
+        const targetStr = lessonData[qIndex].h;
+        
+        if (normalizeString(inputEl.value) === normalizeString(targetStr)) {
+            // Đúng
+            inputEl.value = targetStr; // Format lại cho đẹp
+            inputEl.disabled = true;
+            btnEl.style.display = 'none';
+            msgArea.style.display = 'block';
+            msgArea.innerHTML = `<span class="success-text">✔ Phiên âm chính xác!</span>`;
+        } else {
+            // Sai
+            inputEl.classList.remove('shake');
+            void inputEl.offsetWidth;
+            inputEl.classList.add('shake');
+            msgArea.style.display = 'block';
+            msgArea.innerHTML = `
+                <span class="error-text">✘ Chưa đúng, thử lại nhé!</span> 
+                <span class="show-ans-link" onclick="showPAAns(${qIndex})">Xem đáp án</span>
+            `;
+        }
+    }
+
+    function showPAAns(qIndex) {
+        const inputEl = document.getElementById(`pa-input-${qIndex}`);
+        const btnEl = document.getElementById(`pa-btn-${qIndex}`);
+        const msgArea = document.getElementById(`pa-msg-${qIndex}`);
+        
+        inputEl.value = lessonData[qIndex].h;
+        inputEl.disabled = true;
+        btnEl.style.display = 'none';
+        msgArea.innerHTML = `<span style="color:#d32f2f"><strong>Đáp án:</strong> ${lessonData[qIndex].h}</span>`;
+    }
+
+    /* ====== XỬ LÝ KHỐI 3: DỊCH NGHĨA ====== */
+    function checkDN(qIndex) {
+        const inputEl = document.getElementById(`dn-input-${qIndex}`);
+        const btnEl = document.getElementById(`dn-btn-${qIndex}`);
+        const msgArea = document.getElementById(`dn-msg-${qIndex}`);
+        const targetStr = lessonData[qIndex].n;
+        
+        if (normalizeString(inputEl.value) === normalizeString(targetStr)) {
+            // Đúng
+            inputEl.value = targetStr; // Format lại cho đẹp
+            inputEl.disabled = true;
+            btnEl.style.display = 'none';
+            msgArea.style.display = 'block';
+            msgArea.innerHTML = `<span class="success-text">✔ Dịch nghĩa chính xác!</span>`;
+        } else {
+            // Sai
+            inputEl.classList.remove('shake');
+            void inputEl.offsetWidth;
+            inputEl.classList.add('shake');
+            msgArea.style.display = 'block';
+            msgArea.innerHTML = `
+                <span class="error-text">✘ Chưa đúng, thử lại nhé!</span> 
+                <span class="show-ans-link" onclick="showDNAns(${qIndex})">Xem đáp án</span>
+            `;
+        }
+    }
+
+    function showDNAns(qIndex) {
+        const inputEl = document.getElementById(`dn-input-${qIndex}`);
+        const btnEl = document.getElementById(`dn-btn-${qIndex}`);
+        const msgArea = document.getElementById(`dn-msg-${qIndex}`);
+        
+        inputEl.value = lessonData[qIndex].n;
+        inputEl.disabled = true;
+        btnEl.style.display = 'none';
+        msgArea.innerHTML = `<span style="color:#d32f2f"><strong>Đáp án:</strong> ${lessonData[qIndex].n}</span>`;
     }
 
     initApp();
